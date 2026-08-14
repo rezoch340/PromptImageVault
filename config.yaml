@@ -1,0 +1,19 @@
+server:
+  host: 0.0.0.0
+  port: 8000
+
+libraries:
+  - name: default
+    path: /library
+    recursive: true
+
+scanner:
+  watch: true
+  interval: 60
+
+thumbnail:
+  size: 400
+  format: webp
+
+cache:
+  directory: /cache

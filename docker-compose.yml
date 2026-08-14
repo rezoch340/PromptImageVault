@@ -1,0 +1,16 @@
+services:
+  prompt-image-vault:
+    build: .
+    container_name: prompt-image-vault
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      PROMPT_IMAGE_VAULT_CONFIG: /application/config.yaml
+    volumes:
+      - "${IMAGE_LIBRARY:-./library}:/library:ro"
+      - "./config.yaml:/application/config.yaml:ro"
+      - "prompt-image-vault-cache:/cache"
+
+volumes:
+  prompt-image-vault-cache:
