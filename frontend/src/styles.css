@@ -110,13 +110,15 @@ button { color: inherit; }
 .viewer-file span, .viewer-file small { display: block; max-width: 55vw; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .viewer-file span { font-size: 10px; font-weight: 600; }
 .viewer-file small { margin-top: 4px; color: #626a66; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; }
-.viewer-actions { display: flex; gap: 6px; }
+.viewer-actions { display: flex; align-items: center; gap: 6px; }
+.viewer-zoom-level { min-width: 34px; color: #626a66; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; text-align: right; }
 .viewer-icon { display: grid; place-items: center; width: 34px; height: 34px; color: #8c9590; border: 1px solid #29302d; border-radius: 6px; background: #151a18; cursor: pointer; text-decoration: none; }
 .viewer-icon:hover { color: white; background: #202623; }
-.viewer-image-wrap { position: relative; min-height: 0; flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 28px 64px; }
-.viewer-image-wrap img { display: block; max-width: 100%; max-height: calc(100vh - 130px); object-fit: contain; box-shadow: 0 20px 70px rgb(0 0 0 / 36%); cursor: zoom-in; user-select: none; }
-.viewer-image-wrap img.actual-size { max-width: none; max-height: none; cursor: grab; touch-action: none; will-change: transform; }
-.viewer-image-wrap img.actual-size.dragging { cursor: grabbing; }
+.viewer-image-wrap { position: relative; min-height: 0; flex: 1; overflow: hidden; padding: 28px 64px; touch-action: none; }
+.viewer-image-wrap img { position: absolute; top: 50%; left: 50%; display: block; max-width: none; max-height: none; opacity: 0; box-shadow: 0 20px 70px rgb(0 0 0 / 36%); cursor: zoom-in; transform-origin: center; user-select: none; will-change: transform; transition: opacity .18s ease; }
+.viewer-image-wrap img.ready { opacity: 1; }
+.viewer-image-wrap.zoomed, .viewer-image-wrap.zoomed img { cursor: grab; }
+.viewer-image-wrap.dragging, .viewer-image-wrap.dragging img { cursor: grabbing; }
 .viewer-arrow { position: absolute; top: 50%; display: grid; place-items: center; width: 38px; height: 38px; color: #a5ada9; border: 1px solid #2b322f; border-radius: 50%; background: #171c1a; transform: translateY(-50%); cursor: pointer; }
 .viewer-arrow:hover:not(:disabled) { color: #101512; background: var(--accent); border-color: var(--accent); }
 .viewer-arrow:disabled { opacity: .15; cursor: default; }
@@ -124,7 +126,7 @@ button { color: inherit; }
 .viewer-arrow.next { right: 18px; }
 .viewer-hint { height: 41px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap: 6px; color: #4e5652; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; }
 .viewer-hint kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 19px; height: 18px; padding: 0 4px; color: #737c77; border: 1px solid #303634; border-radius: 3px; background: #171b19; font: inherit; }
-.viewer-hint i { width: 1px; height: 12px; margin: 0 7px; background: #2b312e; }
+.viewer-hint-divider { width: 1px; height: 12px; margin: 0 7px; background: #2b312e; }
 
 .inspector { overflow-y: auto; padding: 29px 27px 36px; color: #323734; background: var(--paper-light); border-left: 1px solid #d8d8d1; }
 .inspector-heading { display: flex; align-items: center; justify-content: space-between; padding-bottom: 25px; border-bottom: 1px solid #deddd6; }
@@ -175,7 +177,6 @@ button { color: inherit; }
   .heading-group { margin-right: auto; }
   .viewer { grid-template-columns: 1fr; overflow-y: auto; }
   .viewer-stage { min-height: 68vh; }
-  .viewer-image-wrap img { max-height: calc(68vh - 110px); }
   .viewer-hint { display: none; }
   .inspector { min-height: 50vh; border-top: 1px solid #d8d8d1; border-left: 0; }
 }
@@ -194,8 +195,8 @@ button { color: inherit; }
   .viewer-stage { min-height: 60vh; }
   .viewer-toolbar { padding: 0 12px 0 16px; }
   .viewer-file span { max-width: 48vw; }
+  .viewer-zoom-level { display: none; }
   .viewer-image-wrap { padding: 20px 43px; }
-  .viewer-image-wrap img { max-height: calc(60vh - 105px); }
   .viewer-arrow { width: 32px; height: 32px; }
   .viewer-arrow.previous { left: 6px; }
   .viewer-arrow.next { right: 6px; }
