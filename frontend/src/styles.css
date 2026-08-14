@@ -113,8 +113,10 @@ button { color: inherit; }
 .viewer-actions { display: flex; gap: 6px; }
 .viewer-icon { display: grid; place-items: center; width: 34px; height: 34px; color: #8c9590; border: 1px solid #29302d; border-radius: 6px; background: #151a18; cursor: pointer; text-decoration: none; }
 .viewer-icon:hover { color: white; background: #202623; }
-.viewer-image-wrap { position: relative; min-height: 0; flex: 1; display: flex; align-items: center; justify-content: center; padding: 28px 64px; }
-.viewer-image-wrap img { display: block; max-width: 100%; max-height: calc(100vh - 130px); object-fit: contain; box-shadow: 0 20px 70px rgb(0 0 0 / 36%); }
+.viewer-image-wrap { position: relative; min-height: 0; flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 28px 64px; }
+.viewer-image-wrap img { display: block; max-width: 100%; max-height: calc(100vh - 130px); object-fit: contain; box-shadow: 0 20px 70px rgb(0 0 0 / 36%); cursor: zoom-in; user-select: none; }
+.viewer-image-wrap img.actual-size { max-width: none; max-height: none; cursor: grab; touch-action: none; will-change: transform; }
+.viewer-image-wrap img.actual-size.dragging { cursor: grabbing; }
 .viewer-arrow { position: absolute; top: 50%; display: grid; place-items: center; width: 38px; height: 38px; color: #a5ada9; border: 1px solid #2b322f; border-radius: 50%; background: #171c1a; transform: translateY(-50%); cursor: pointer; }
 .viewer-arrow:hover:not(:disabled) { color: #101512; background: var(--accent); border-color: var(--accent); }
 .viewer-arrow:disabled { opacity: .15; cursor: default; }

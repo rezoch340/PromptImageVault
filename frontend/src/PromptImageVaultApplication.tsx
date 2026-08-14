@@ -112,6 +112,7 @@ export default function PromptImageVaultApplication() {
       </main>
       {selectedImageIdentifier && (
         <ImageViewer
+          key={selectedImageIdentifier}
           imageIdentifier={selectedImageIdentifier}
           metadata={metadata}
           loading={metadataLoading}
