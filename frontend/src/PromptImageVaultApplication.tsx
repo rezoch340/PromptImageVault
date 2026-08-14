@@ -44,7 +44,6 @@ export default function PromptImageVaultApplication() {
 
   const selectImage = useCallback((imageIdentifier: string) => {
     setSelectedImageIdentifier(imageIdentifier)
-    setMetadata(null)
     setMetadataLoading(true)
   }, [])
 
@@ -112,7 +111,6 @@ export default function PromptImageVaultApplication() {
       </main>
       {selectedImageIdentifier && (
         <ImageViewer
-          key={selectedImageIdentifier}
           imageIdentifier={selectedImageIdentifier}
           metadata={metadata}
           loading={metadataLoading}

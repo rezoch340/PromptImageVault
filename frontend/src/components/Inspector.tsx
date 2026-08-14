@@ -25,7 +25,7 @@ function DataRow({ label, value }: { label: string; value: string | number | nul
 }
 
 export function Inspector({ metadata, loading }: InspectorProps) {
-  if (loading || !metadata) {
+  if (!metadata) {
     return <aside className="inspector inspector-loading">
       <div className="inspector-title"><div /><span /></div>
       <div className="prompt-skeleton" /><div className="prompt-skeleton short" />
@@ -42,7 +42,7 @@ export function Inspector({ metadata, loading }: InspectorProps) {
   ].filter(Boolean).join('\n\n')
 
   return (
-    <aside className="inspector">
+    <aside className="inspector" aria-busy={loading}>
       <div className="inspector-heading">
         <div><span>METADATA</span><h2>Generation details</h2></div>
         <CopyButton value={completeMetadata} label="all metadata" />
