@@ -112,6 +112,7 @@ export default function PromptImageVaultApplication() {
       {selectedImageIdentifier && (
         <ImageViewer
           imageIdentifier={selectedImageIdentifier}
+          extension={images[selectedImageIndex]?.extension ?? ''}
           metadata={metadata}
           loading={metadataLoading}
           canPrevious={selectedImageIndex > 0}

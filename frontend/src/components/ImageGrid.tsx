@@ -1,6 +1,6 @@
-import { ImageOff } from 'lucide-react'
+import { ImageOff, Play } from 'lucide-react'
 import { useState } from 'react'
-import { thumbnailUrl } from '../api'
+import { isVideoExtension, thumbnailUrl } from '../api'
 import type { ImageItem } from '../types'
 import { EmptyState } from './common/EmptyState'
 
@@ -27,6 +27,9 @@ function ImagePreview({ item }: { item: ImageItem }) {
           onError={() => setFailed(true)}
           className={loaded ? 'loaded' : ''}
         />
+      )}
+      {isVideoExtension(item.extension) && (
+        <span className="video-chip"><Play size={10} fill="currentColor" /> {item.extension}</span>
       )}
       {item.model && <span className="model-chip">{item.model}</span>}
     </div>
@@ -69,7 +72,7 @@ export function ImageGrid({ images, loading, error, onSelect, onRetry }: ImageGr
       <EmptyState
         icon={<ImageOff size={26} />}
         title="Your vault is ready"
-        description="Add PNG, JPG, JPEG, or WebP files to your mounted library."
+        description="Add PNG, JPG, JPEG, WebP, GIF, MP4, or WebM files to your mounted library."
       />
     )
   }

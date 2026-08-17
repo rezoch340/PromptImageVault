@@ -5,11 +5,16 @@ from typing import Any
 
 from PIL import Image
 
+from ..files import VIDEO_EXTENSIONS
 from .a1111 import parse_parameters
 from .comfyui import parse_comfy
+from .video import extract_video_metadata
 
 
 def extract_metadata(path: Path) -> tuple[dict[str, Any], int, int]:
+    if path.suffix.lower() in VIDEO_EXTENSIONS:
+        return extract_video_metadata(path)
+
     with Image.open(path) as image:
         width, height = image.size
         info = dict(image.info)
