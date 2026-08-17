@@ -1,4 +1,4 @@
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy, X } from 'lucide-react'
 import { useState } from 'react'
 import type { ImageMetadata } from '../types'
 
@@ -7,15 +7,41 @@ interface InspectorProps {
   loading: boolean
 }
 
-function CopyButton({ value, label }: { value: string; label: string }) {
-  const [copied, setCopied] = useState(false)
-  const copy = async () => {
+async function copyText(value: string) {
+  try {
     await navigator.clipboard.writeText(value)
-    setCopied(true)
-    window.setTimeout(() => setCopied(false), 1400)
+    return true
+  } catch {
+    // ponytail: navigator.clipboard is undefined outside secure contexts (plain http on a LAN
+    // address), so the promise rejects and the button looks dead. execCommand still works there.
+    const holder = document.createElement('textarea')
+    holder.value = value
+    holder.readOnly = true
+    holder.style.cssText = 'position:fixed;top:0;left:0;opacity:0'
+    document.body.append(holder)
+    holder.select()
+    holder.setSelectionRange(0, value.length)
+    const copied = document.execCommand('copy')
+    holder.remove()
+    return copied
   }
-  return <button className="copy-button" onClick={copy} disabled={!value} title={`Copy ${label}`}>
-    {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? 'Copied' : 'Copy'}
+}
+
+function CopyButton({ value, label }: { value: string; label: string }) {
+  const [result, setResult] = useState<'idle' | 'copied' | 'failed'>('idle')
+  const copy = async () => {
+    setResult(await copyText(value) ? 'copied' : 'failed')
+    window.setTimeout(() => setResult('idle'), 1400)
+  }
+  return <button
+    type="button"
+    className={`copy-button ${result === 'failed' ? 'failed' : ''}`.trim()}
+    onClick={() => void copy()}
+    disabled={!value}
+    title={`Copy ${label}`}
+  >
+    {result === 'copied' ? <Check size={14} /> : result === 'failed' ? <X size={14} /> : <Copy size={14} />}
+    {result === 'copied' ? 'Copied' : result === 'failed' ? 'Blocked' : 'Copy'}
   </button>
 }
 

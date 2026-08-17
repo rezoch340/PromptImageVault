@@ -85,6 +85,7 @@ button { color: inherit; }
 .image-card:focus-visible { outline: 2px solid #829e23; outline-offset: 4px; border-radius: 6px; }
 .image-shimmer { position: absolute; inset: 0; background: linear-gradient(100deg, #e2e1db 15%, #ecebe6 45%, #e2e1db 75%); background-size: 200% 100%; animation: shimmer 1.5s linear infinite; }
 .image-failed { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #9a9d98; font-size: 10px; }
+.video-chip { position: absolute; left: 9px; top: 9px; display: flex; align-items: center; gap: 4px; padding: 4px 7px; color: #e8edea; background: rgb(15 20 18 / 72%); backdrop-filter: blur(6px); border: 1px solid rgb(255 255 255 / 10%); border-radius: 4px; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; }
 .model-chip { position: absolute; left: 9px; bottom: 9px; max-width: calc(100% - 18px); overflow: hidden; padding: 5px 7px; color: #e8edea; background: rgb(15 20 18 / 72%); backdrop-filter: blur(6px); border: 1px solid rgb(255 255 255 / 10%); border-radius: 4px; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; text-overflow: ellipsis; opacity: 0; transform: translateY(3px); transition: .2s ease; }
 .image-card:hover .model-chip { opacity: 1; transform: translateY(0); }
 .image-caption { padding-top: 10px; }
@@ -105,7 +106,8 @@ button { color: inherit; }
 .load-more-wrap button:disabled { opacity: .55; cursor: wait; }
 
 .viewer { position: fixed; inset: 0; z-index: 100; display: grid; grid-template-columns: minmax(0, 1fr) 385px; background: #0c100f; animation: viewer-in .2s ease-out; }
-.viewer-stage { min-width: 0; display: flex; flex-direction: column; }
+/* min-height: 0 keeps an in-flow child (the video) from stretching the grid row past the viewport. */
+.viewer-stage { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
 .viewer-toolbar { height: 65px; flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 20px 0 24px; color: #d7dcd9; border-bottom: 1px solid #212624; }
 .viewer-file span, .viewer-file small { display: block; max-width: 55vw; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .viewer-file span { font-size: 10px; font-weight: 600; }
@@ -117,6 +119,8 @@ button { color: inherit; }
 .viewer-image-wrap { position: relative; min-height: 0; flex: 1; overflow: hidden; padding: 28px 64px; touch-action: none; }
 .viewer-image-wrap img { position: absolute; top: 50%; left: 50%; display: block; max-width: none; max-height: none; opacity: 0; box-shadow: 0 20px 70px rgb(0 0 0 / 36%); cursor: zoom-in; transform-origin: center; user-select: none; will-change: transform; transition: opacity .18s ease; }
 .viewer-image-wrap img.ready { opacity: 1; }
+.viewer-image-wrap.video { display: flex; align-items: center; justify-content: center; touch-action: auto; }
+.viewer-image-wrap video { max-width: 100%; max-height: 100%; display: block; background: black; border-radius: 3px; box-shadow: 0 20px 70px rgb(0 0 0 / 36%); }
 .viewer-image-wrap.zoomed, .viewer-image-wrap.zoomed img { cursor: grab; }
 .viewer-image-wrap.dragging, .viewer-image-wrap.dragging img { cursor: grabbing; }
 .viewer-arrow { position: absolute; top: 50%; display: grid; place-items: center; width: 38px; height: 38px; color: #a5ada9; border: 1px solid #2b322f; border-radius: 50%; background: #171c1a; transform: translateY(-50%); cursor: pointer; }
@@ -135,6 +139,7 @@ button { color: inherit; }
 .copy-button { display: flex; align-items: center; gap: 5px; padding: 6px 7px; color: #6e746f; border: 1px solid #d9d8d2; border-radius: 4px; background: transparent; font-size: 8px; cursor: pointer; }
 .copy-button:hover:not(:disabled) { color: #2d332f; border-color: #b9bcb6; background: white; }
 .copy-button:disabled { opacity: .35; cursor: default; }
+.copy-button.failed { color: #a8412f; border-color: #d8b3aa; }
 .prompt-section { padding: 22px 0; border-bottom: 1px solid #deddd6; }
 .section-title { display: flex; align-items: center; justify-content: space-between; }
 .prompt-section h3, .details-section h3 { margin: 0; color: #737872; font: 600 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .7px; text-transform: uppercase; }

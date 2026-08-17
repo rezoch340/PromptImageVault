@@ -12,10 +12,12 @@ from PIL import UnidentifiedImageError
 
 from .config import ApplicationConfig, LibraryConfig
 from .database import Database
+from .files import SUPPORTED_EXTENSIONS
 from .metadata import extract_metadata
 
 LOGGER = logging.getLogger(__name__)
-SUPPORTED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp"}
+
+__all__ = ["Scanner", "SUPPORTED_EXTENSIONS", "make_image_identifier"]
 
 
 def make_image_identifier(library: str, relative_path: str) -> str:

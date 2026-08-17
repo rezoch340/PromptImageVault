@@ -1,6 +1,6 @@
 # PromptImageVault
 
-本地优先的 AI 图片资产浏览器。它会索引挂载目录中的 PNG、JPG、JPEG 和 WebP 图片，生成缩略图，并显示 Automatic1111 / Forge 与 ComfyUI 的生成参数。
+本地优先的 AI 图片资产浏览器。它会索引挂载目录中的 PNG、JPG、JPEG、WebP、GIF 图片与 MP4、WebM 视频，生成缩略图（视频取首帧），并显示 Automatic1111 / Forge 与 ComfyUI 的生成参数。
 
 前端和后端构建在同一个 Docker 镜像中：Vite 产物由 FastAPI 直接提供，浏览器通过同源 `/api` 和 `/ws` 访问后端，不需要跨域配置或额外的前端容器。
 

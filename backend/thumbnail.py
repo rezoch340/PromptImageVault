@@ -4,7 +4,30 @@ import os as operating_system
 import threading
 from pathlib import Path
 
+import av
 from PIL import Image, ImageOps
+
+from .files import VIDEO_EXTENSIONS
+
+
+def open_poster_frame(source: Path) -> Image.Image:
+    """First decodable frame of a video, as a PIL image."""
+    try:
+        with av.open(str(source)) as container:
+            stream = container.streams.video[0]
+            stream.thread_type = "AUTO"
+            frame = next(container.decode(stream), None)
+    except (av.FFmpegError, IndexError) as error:
+        raise OSError(f"Cannot decode video {source}: {error}") from error
+    if frame is None:
+        raise OSError(f"No decodable frame in {source}")
+    return frame.to_image()
+
+
+def open_source_image(source: Path) -> Image.Image:
+    if source.suffix.lower() in VIDEO_EXTENSIONS:
+        return open_poster_frame(source)
+    return Image.open(source)
 
 
 class ThumbnailCache:
@@ -25,7 +48,7 @@ class ThumbnailCache:
             if destination.exists() and destination.stat().st_mtime_ns >= source.stat().st_mtime_ns:
                 return destination
             temporary = destination.with_suffix(".tmp.webp")
-            with Image.open(source) as image:
+            with open_source_image(source) as image:
                 image = ImageOps.exif_transpose(image)
                 image.thumbnail((self.size, self.size), Image.Resampling.LANCZOS)
                 if image.mode not in {"RGB", "RGBA"}:

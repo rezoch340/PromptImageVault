@@ -12,6 +12,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PROMPT_IMAGE_VAULT_CONFIG=/application/config.yaml
 WORKDIR /application
 COPY backend/requirements.txt /tmp/requirements.txt
+# ponytail: PyAV wheels bundle ffmpeg, so no apt-get ffmpeg layer is needed.
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 COPY backend/ ./backend/
 COPY config.yaml ./config.yaml

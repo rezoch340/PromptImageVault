@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight, Download, X as CloseIcon, ZoomIn, ZoomOut } from 'lucide-react'
 import { useEffect } from 'react'
-import { imageUrl } from '../api'
+import { imageUrl, isVideoExtension } from '../api'
 import { useImageViewport } from '../hooks/useImageViewport'
 import type { ImageMetadata } from '../types'
 import { IconButton } from './common/IconButton'
@@ -8,6 +8,7 @@ import { Inspector } from './Inspector'
 
 interface ImageViewerProps {
   imageIdentifier: string
+  extension: string
   metadata: ImageMetadata | null
   loading: boolean
   canPrevious: boolean
@@ -20,6 +21,7 @@ interface ImageViewerProps {
 export function ImageViewer(props: ImageViewerProps) {
   const {
     imageIdentifier,
+    extension,
     metadata,
     loading,
     canPrevious,
@@ -45,6 +47,7 @@ export function ImageViewer(props: ImageViewerProps) {
     handleImageLoad,
     handleImageClick,
   } = useImageViewport()
+  const isVideo = isVideoExtension(extension || metadata?.extension)
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -69,15 +72,17 @@ export function ImageViewer(props: ImageViewerProps) {
             {metadata && <small>{metadata.width} × {metadata.height}</small>}
           </div>
           <div className="viewer-actions">
-            <span className="viewer-zoom-level">{zoomPercentage}%</span>
-            <IconButton
-              accessibleLabel={atFitScale ? 'Zoom image in' : 'Fit image to window'}
-              appearance="viewer"
-              aria-pressed={!atFitScale}
-              onClick={toggleZoom}
-            >
-              {atFitScale ? <ZoomIn size={18} /> : <ZoomOut size={18} />}
-            </IconButton>
+            {!isVideo && <>
+              <span className="viewer-zoom-level">{zoomPercentage}%</span>
+              <IconButton
+                accessibleLabel={atFitScale ? 'Zoom image in' : 'Fit image to window'}
+                appearance="viewer"
+                aria-pressed={!atFitScale}
+                onClick={toggleZoom}
+              >
+                {atFitScale ? <ZoomIn size={18} /> : <ZoomOut size={18} />}
+              </IconButton>
+            </>}
             <a
               href={imageUrl(imageIdentifier)}
               download={metadata?.filename}
@@ -92,26 +97,42 @@ export function ImageViewer(props: ImageViewerProps) {
           </div>
         </div>
         <div
-          className={`viewer-image-wrap ${atFitScale ? '' : 'zoomed'} ${dragging ? 'dragging' : ''}`.trim()}
+          className={`viewer-image-wrap ${isVideo ? 'video' : ''} ${atFitScale ? '' : 'zoomed'} ${dragging ? 'dragging' : ''}`.trim()}
           ref={viewportReference}
-          onWheel={handleWheel}
-          onPointerDown={beginGesture}
-          onPointerMove={continueGesture}
-          onPointerUp={finishGesture}
-          onPointerCancel={cancelGesture}
+          {...(isVideo ? {} : {
+            onWheel: handleWheel,
+            onPointerDown: beginGesture,
+            onPointerMove: continueGesture,
+            onPointerUp: finishGesture,
+            onPointerCancel: cancelGesture,
+          })}
         >
-          <img
-            ref={imageReference}
-            src={imageUrl(imageIdentifier)}
-            alt={metadata?.prompt || metadata?.filename || 'Selected image'}
-            className={imageReady ? 'ready' : ''}
-            style={{
-              transform: `translate3d(calc(-50% + ${viewTransform.horizontal}px), calc(-50% + ${viewTransform.vertical}px), 0) scale(${viewTransform.scale})`,
-            }}
-            draggable={false}
-            onLoad={handleImageLoad}
-            onClick={handleImageClick}
-          />
+          {isVideo ? (
+            <video
+              key={imageIdentifier}
+              src={imageUrl(imageIdentifier)}
+              controls
+              muted
+              loop
+              playsInline
+              // ponytail: React assigns `muted` after mount, so an autoPlay attribute is judged
+              // unmuted and blocked. Starting playback once the first frame lands is reliable.
+              onLoadedData={(event) => void event.currentTarget.play().catch(() => undefined)}
+            />
+          ) : (
+            <img
+              ref={imageReference}
+              src={imageUrl(imageIdentifier)}
+              alt={metadata?.prompt || metadata?.filename || 'Selected image'}
+              className={imageReady ? 'ready' : ''}
+              style={{
+                transform: `translate3d(calc(-50% + ${viewTransform.horizontal}px), calc(-50% + ${viewTransform.vertical}px), 0) scale(${viewTransform.scale})`,
+              }}
+              draggable={false}
+              onLoad={handleImageLoad}
+              onClick={handleImageClick}
+            />
+          )}
           <IconButton
             accessibleLabel="Previous image"
             appearance="navigation"
@@ -132,9 +153,11 @@ export function ImageViewer(props: ImageViewerProps) {
           </IconButton>
         </div>
         <div className="viewer-hint">
-          <kbd>Wheel</kbd> zoom <span className="viewer-hint-divider" />
-          <kbd>Drag</kbd> pan <span className="viewer-hint-divider" />
-          <kbd>Pinch</kbd> mobile zoom <span className="viewer-hint-divider" />
+          {!isVideo && <>
+            <kbd>Wheel</kbd> zoom <span className="viewer-hint-divider" />
+            <kbd>Drag</kbd> pan <span className="viewer-hint-divider" />
+            <kbd>Pinch</kbd> mobile zoom <span className="viewer-hint-divider" />
+          </>}
           <kbd>←</kbd><kbd>→</kbd> navigate <span className="viewer-hint-divider" />
           <kbd>ESC</kbd> close
         </div>

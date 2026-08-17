@@ -6,6 +6,11 @@ async function getJson<ResponseData>(path: string, signal?: AbortSignal): Promis
   return response.json() as Promise<ResponseData>
 }
 
+const VIDEO_EXTENSIONS = ['mp4', 'webm']
+
+export const isVideoExtension = (extension: string | undefined) =>
+  VIDEO_EXTENSIONS.includes((extension ?? '').toLowerCase())
+
 export const imageUrl = (imageIdentifier: string) =>
   `/api/image/${encodeURIComponent(imageIdentifier)}`
 export const thumbnailUrl = (imageIdentifier: string) =>
